@@ -1,0 +1,104 @@
+Install Guide
+
+
+Commands
+
+
+Arch Install
+
+
+Connect to a network
+
+iwctl
+
+device list
+station device scan
+station device get-networks 
+station device connect SSID
+Exit
+ping google.com 
+
+Update Time
+
+timedatectl set-timezone Asia/Karachi
+
+
+Partitioning
+
+lsblk 
+Fdisk -l
+cfdisk /dev/nvme0n1
+mkfs.ext4 /dev/nvme0n1p*
+
+Mounting
+
+mount /dev/nvme0n1p* /mnt
+mkdir /mnt/home 
+mount /dev/nvme0n1p* /mnt/home
+
+
+Install Base System 
+
+pacstrap -i /mnt base base-devel linux linux-lts linux-headers linux-firmware intel-ucode sudo networkmanager nano git neofetch dhcpcd ntfs-3g 
+
+Fstab
+
+genfstab -U /mnt >> /mnt/etc/fstab
+
+ArchChroot
+
+arch-chroot /mnt
+passwd 
+useradd -m aliammar
+passwd aliammar 
+usermod-aG wheel,power,storage aliammar
+EDITOR=nano visudo 
+
+nano /etc/locale.gen
+locale-gen
+echo LANG=en_GB.UTF-8 > /etc/locale.conf
+export LANG=en_GB.UTF-8
+
+echo RAZER-A > /etc/hostname 
+nano /etc/hosts
+
+127.0.0.1    localhost 
+::1               localhost
+127.0.1.1     RAZER-A.localdomain   localhost
+
+ln-sf /usr/share/zoneinfo/Asia/Karachi /etc/localtime
+
+hwclock --systohc
+
+Bootloader 
+
+mkdir /boot/efi 
+mount /dev/nvme0n1p1/ /boot/efi
+pacman -S grub efibootmgr dosfstools mtools os-prober 
+
+nano /etc/default/grub
+grub-install —target=x86_64-efi —bootloader-id=ArchLinux —recheck
+
+grub-mkconfig -o /boot/grub/grub.cfg 
+
+
+systemctl enable dhcpcd.service
+systemctl enable NetworkManager.service
+exit 
+reboot 
+
+nmcli device wifi list
+nmcli device wifi connect SSID_or_BSSID password password
+
+Base System Installed
+
+KDE Install
+sudo pacman-S xorg xorg-init xterm plasma plasma-desktop plasma-wayland-session kde-applications kdeplasma-addons ssdm 
+
+sudo nano ~/.xinitrc     exec startkde 
+sudo systemctl enable sddm.service
+
+Gnome Install 
+
+sudo Pacman -S gnome
+
