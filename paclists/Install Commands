@@ -1,13 +1,9 @@
-Install Guide
+##Install Guide##
+
+#Installing Arch
 
 
-Commands
-
-
-Arch Install
-
-
-Connect to a network
+#Connect to a network
 
 iwctl
 
@@ -16,48 +12,75 @@ station device scan
 station device get-networks 
 station device connect SSID
 Exit
+
 ping google.com 
 
-Update Time
+
+#Update Time
 
 timedatectl set-timezone Asia/Karachi
 
 
-Partitioning
+#Partitioning and Labeling
 
 lsblk 
 Fdisk -l
 cfdisk /dev/nvme0n1
-mkfs.ext4 /dev/nvme0n1p*
+Make sure to label the /, ArchRoot and /home Home
 
-Mounting
 
+#Mounting
+
+mkdir /mnt/home
+mount /dev/nvme0n1p* /mnt/boot
 mount /dev/nvme0n1p* /mnt
-mkdir /mnt/home 
 mount /dev/nvme0n1p* /mnt/home
 
 
-Install Base System 
+#Reflector
 
-pacstrap -i /mnt base base-devel linux linux-lts linux-headers linux-firmware intel-ucode sudo networkmanager nano git neofetch dhcpcd ntfs-3g 
+reflector --verbose --latest 20 --protocol http --sort rate --save /etc/pacman.d/mirrorlist
 
-Fstab
+
+#Alternativly
+#Install Base System 
+
+pacstrap -i /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode sudo networkmanager nano reflector git curl wget neofetch ntfs-3g openssh parted fish efibootmgr dosfstools mtools man-db man-pages memtest86+ samba 
+
+
+#Fstab
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
-ArchChroot
+
+#ArchChroot
 
 arch-chroot /mnt
 passwd 
+
+#Get Arch Installation Commands
+
+git clone https://github.com/aliammar03/Arch
+
+
+#Add Users
+
 useradd -m aliammar
 passwd aliammar 
-usermod-aG wheel,power,storage aliammar
+usermod-aG wheel,ftp,sys,kvm aliammar
 EDITOR=nano visudo 
+
+
+#Locale
 
 nano /etc/locale.gen
 locale-gen
 echo LANG=en_GB.UTF-8 > /etc/locale.conf
 export LANG=en_GB.UTF-8
+
+
+
+#Set hosts
 
 echo RAZER-A > /etc/hostname 
 nano /etc/hosts
@@ -66,39 +89,67 @@ nano /etc/hosts
 ::1               localhost
 127.0.1.1     RAZER-A.localdomain   localhost
 
+#Alternatively
+
+cp /Arch/etc/hostname /etc/hostname
+cp /Arch/etc/hosts /etc/hosts
+
+
+#Set Clock
+
 ln-sf /usr/share/zoneinfo/Asia/Karachi /etc/localtime
 
 hwclock --systohc
 
-Bootloader 
 
-mkdir /boot/efi 
-mount /dev/nvme0n1p1/ /boot/efi
-pacman -S grub efibootmgr dosfstools mtools os-prober 
+#Bootloader 
 
-nano /etc/default/grub
-grub-install —target=x86_64-efi —bootloader-id=ArchLinux —recheck
+#Systemd-boot
 
-grub-mkconfig -o /boot/grub/grub.cfg 
+bootctl install
+systemctl enable systemd-boot-update.service
+
+nano /boot/loader/loader.conf
+
+default  Arch.conf
+timeout  0
+editor   yes
+
+nano /boot/loader/entries/Arch.conf
+
+title Arch Linux
+linux /vmlinuz-linux-zen
+initrd /intel-ucode.img
+initrd /initramfs-linux-zen.img
+options root="LABEL=ArchRoot" rw quiet splash
+
+#Windows
+
+mkdir /mnt/winefi
+mount /dev/nvme0n1p* /mnt/winefi
+cp -r /mnt/winefi/EFI/Microsoft /boot/EFI/Microsoft
 
 
-systemctl enable dhcpcd.service
+
+#Reflector Service
+
+nano /etc/xdg/reflector/reflector.conf
+
+--save /etc/pacman.d/mirrorlist
+--protocol http
+--latest 20
+--sort rate
+
+
+#Services
+
 systemctl enable NetworkManager.service
+systemctl enable gdm.service
+systemctl enable reflector.service
+systemctl enable reflector.service
+
+
 exit 
 reboot 
 
-nmcli device wifi list
-nmcli device wifi connect SSID_or_BSSID password password
-
-Base System Installed
-
-KDE Install
-sudo pacman-S xorg xorg-init xterm plasma plasma-desktop plasma-wayland-session kde-applications kdeplasma-addons ssdm 
-
-sudo nano ~/.xinitrc     exec startkde 
-sudo systemctl enable sddm.service
-
-Gnome Install 
-
-sudo Pacman -S gnome
 
