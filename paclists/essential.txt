@@ -8,11 +8,9 @@ ntfs-3g
 openssh
 parted
 fish
-grub
 efibootmgr
 dosfstools
 mtools
-os-prober
 man-db
 man-pages
 memtest86+
