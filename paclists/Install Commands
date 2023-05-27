@@ -130,6 +130,11 @@ mount /dev/nvme0n1p* /mnt/winefi
 cp -r /mnt/winefi/EFI/Microsoft /boot/EFI/Microsoft
 
 
+#Paclists
+pacman -S --needed - < media.txt
+pacman -S --needed - < print.txt
+pacman -S --needed - < apps.txt
+pacman -S gnome
 
 #Reflector Service
 
