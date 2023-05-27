@@ -1,13 +1,6 @@
-base
-base-devel
-linux-zen
-linux-zen-headers
-linux-firmware
-intel-ucode
+
 sudo
 networkmanager
-nano
-git
 curl
 wget
 neofetch
