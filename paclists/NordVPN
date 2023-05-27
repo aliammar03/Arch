@@ -1,0 +1,5 @@
+paru -S nordvpn-bin
+gpasswd -aG aliammar nordvpn
+systemctl enable nordvpnd.service
+systemctl start nordvpnd.service
+nordvpn set technology nordlynx
