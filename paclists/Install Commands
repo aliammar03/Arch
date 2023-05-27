@@ -45,7 +45,7 @@ reflector --verbose --latest 20 --protocol http --sort rate --save /etc/pacman.d
 #Alternativly
 #Install Base System 
 
-pacstrap -i /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode sudo networkmanager nano reflector git curl wget neofetch ntfs-3g openssh parted fish efibootmgr dosfstools mtools man-db man-pages memtest86+ samba 
+pacstrap -i /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode reflector git sudo
 
 
 #Fstab
@@ -131,6 +131,7 @@ cp -r /mnt/winefi/EFI/Microsoft /boot/EFI/Microsoft
 
 
 #Paclists
+pacman -S --needed - < essential.txt
 pacman -S --needed - < media.txt
 pacman -S --needed - < print.txt
 pacman -S --needed - < apps.txt
@@ -151,8 +152,6 @@ nano /etc/xdg/reflector/reflector.conf
 systemctl enable NetworkManager.service
 systemctl enable gdm.service
 systemctl enable reflector.service
-systemctl enable reflector.service
-
 
 exit 
 reboot 
