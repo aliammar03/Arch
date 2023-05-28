@@ -6,6 +6,17 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+# Check if the line is already uncommented in sudoers
+if grep -q "^%wheel ALL=(ALL:ALL) ALL" /etc/sudoers; then
+    echo "Sudo is already configured"
+    exit 0
+fi
+
+# Uncomment the line in sudoers
+sudo sed -i 's/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
+
+echo "The line has been successfully uncommented in the sudoers file."
+
 # Function to change the password for a user
 change_password() {
     local username=$1
