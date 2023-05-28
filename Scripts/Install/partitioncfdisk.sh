@@ -13,9 +13,16 @@ partition_disk() {
 }
 
 # Function to format a partition as ext4
-format_partition() {
+format_partition_ext4() {
     echo "Formatting the partition as ext4..."
     mkfs.ext4 "${disk}${partition}"
+}
+
+# Function to format a partition as FAT32 and flag it as ESP using parted
+format_partition_fat32_esp() {
+    echo "Formatting the partition as FAT32 and flagging it as ESP..."
+    parted -s $disk set $partition esp on
+    mkfs.fat -F32 "${disk}${partition}"
 }
 
 # Function to mount a partition at the specified mount point
@@ -26,17 +33,17 @@ mount_partition() {
     echo "Partition successfully mounted at $mount_point."
 }
 
-# Prompt for the disk to work with
-echo "Please enter the disk to work with (e.g., /dev/sda):"
-read disk
-
 # Loop until the user chooses to exit
 while true; do
+    # Prompt for the disk to work with
+    echo "Please enter the disk to work with (e.g., /dev/sda):"
+    read disk
+
     # Prompt for the action
     echo "Please select an action:"
     echo "1. Use cfdisk to partition the disk"
-    echo "2. Partition and format root"
-    echo "3. Mount boot"
+    echo "2. Partition and format root (ext4)"
+    echo "3. Mount boot (format as FAT32 and flag as ESP)"
     echo "4. Mount home"
     echo "5. Exit"
     read -p "Enter the action number: " action
@@ -49,26 +56,27 @@ while true; do
         # Prompt for the partition number
         echo "Please enter the partition number to format (e.g., 1):"
         read partition
-
+        
         # Prompt to format the partition
         read -p "Do you want to format the partition as ext4? (y/n): " format_choice
         if [[ $format_choice == "y" || $format_choice == "Y" ]]; then
-            format_partition
+            format_partition_ext4
         fi
-        
+
         mount_point="/mnt/"
         mkdir -p $mount_point
         mount_partition
 
+
     elif [[ $action -eq 3 ]]; then
-        # Mount an existing partition to /mnt/boot
-        echo "Please enter the partition to mount (e.g., /dev/sda1):"
+        # Prompt for the partition number
+        echo "Please enter the partition number to format (e.g., 1):"
         read partition
 
-        # Check if the partition exists
-        if [[ ! -e $partition ]]; then
-            echo "Error: Partition $partition does not exist."
-            continue
+        # Prompt to format the partition
+        read -p "Do you want to format the partition as FAT32 and flag it as ESP? (y/n): " format_choice
+        if [[ $format_choice == "y" || $format_choice == "Y" ]]; then
+            format_partition_fat32_esp
         fi
 
         mount_point="/mnt/boot"
@@ -83,9 +91,9 @@ while true; do
         # Prompt to format the partition
         read -p "Do you want to format the partition as ext4? (y/n): " format_choice
         if [[ $format_choice == "y" || $format_choice == "Y" ]]; then
-            format_partition
+            format_partition_ext4
         fi
-        
+
         mount_point="/mnt/home"
         mkdir -p $mount_point
         mount_partition
