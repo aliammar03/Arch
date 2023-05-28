@@ -56,7 +56,7 @@ while true; do
             format_partition
         fi
         
-        mount_point="/mnt/home"
+        mount_point="/mnt/"
         mkdir -p $mount_point
         mount_partition
 
