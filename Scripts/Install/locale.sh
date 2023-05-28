@@ -47,9 +47,6 @@ fi
 # Generate and set the locale
 generate_locale "$locale"
 
-# Prompt the user to enter the new hostname
-read -p "Enter the new hostname: " hostname
-
 
 # Prompt the user to enter the desired timezone
 read -p "Enter the timezone (e.g., Asia/Karachi): " timezone
