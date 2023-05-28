@@ -26,16 +26,16 @@ mount_partition() {
     echo "Partition successfully mounted at $mount_point."
 }
 
+# Prompt for the disk to work with
+echo "Please enter the disk to work with (e.g., /dev/sda):"
+read disk
+
 # Loop until the user chooses to exit
 while true; do
-    # Prompt for the disk to work with
-    echo "Please enter the disk to work with (e.g., /dev/sda):"
-    read disk
-
     # Prompt for the action
     echo "Please select an action:"
     echo "1. Use cfdisk to partition the disk"
-    echo "2. Format and mount root"
+    echo "2. Partition and format root"
     echo "3. Mount boot"
     echo "4. Mount home"
     echo "5. Exit"
@@ -79,15 +79,15 @@ while true; do
             echo "Error: Partition $partition does not exist."
             continue
         fi
-        
-        
+
+        mount_point="/mnt/home"
 
         # Prompt to format the partition
         read -p "Do you want to format the partition as ext4? (y/n): " format_choice
         if [[ $format_choice == "y" || $format_choice == "Y" ]]; then
             format_partition
         fi
-        mount_point="/mnt/home"
+
         mkdir -p $mount_point
         mount_partition
 
