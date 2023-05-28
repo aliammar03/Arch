@@ -6,103 +6,91 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# Function to mount a partition
-mount_partition() {
-    local partition=$1
-    local mount_point=$2
-
-    # Create mount point directory if it doesn't exist
-    if [[ ! -d $mount_point ]]; then
-        mkdir -p $mount_point
-        echo "Mount point directory $mount_point created."
-    fi
-
-    # Mount the partition
-    mount $partition $mount_point
-
-    echo "Partition $partition has been mounted on $mount_point."
-}
-
-# Function to format, label, and mount a partition
-format_label_mount_partition() {
-    local partition=$1
-    local filesystem=$2
-    local label=$3
-    local mount_point=$4
-
-    # Check if the partition exists
-    if [[ ! -b $partition ]]; then
-        echo "Partition $partition does not exist. Skipping."
-        return
-    fi
-
-    # Format the partition with the chosen filesystem
-    if [[ $filesystem == "ext4" ]]; then
-        mkfs.ext4 $partition
-    elif [[ $filesystem == "fat32" ]]; then
-        mkfs.fat -F32 $partition
-    else
-        echo "Invalid filesystem type. Skipping partition $partition."
-        return
-    fi
-
-    # Set the partition label
-    e2label $partition $label
-
-    # Mount the partition
-    mount_partition $partition $mount_point
-}
-
-# Function to partition a disk using cfdisk
+# Function to partition the disk using cfdisk
 partition_disk() {
-    local disk=$1
-
-    echo "Partitioning disk $disk using cfdisk..."
+    echo "Partitioning the disk using cfdisk..."
     cfdisk $disk
 }
 
-# List available disks
-lsblk
+# Function to format a partition as ext4 and label it
+format_partition() {
+    echo "Formatting the partition as ext4..."
+    mkfs.ext4 "${disk}${partition}"
 
-while true; do
-    echo "1. Partition a disk using cfdisk"
-    echo "2. Format, label, and mount a partition"
-    echo "3. Mount a partition (without formatting)"
-    echo "4. Quit"
+    echo "Labeling the partition..."
+    e2label "${disk}${partition}" $label
+}
 
-    # Prompt user for action
-    read -p "Enter your choice (1, 2, 3, or 4): " choice
+# Function to mount a partition at the specified mount point
+mount_partition() {
+    echo "Mounting the partition at $mount_point..."
+    mount "${disk}${partition}" $mount_point
 
-    case $choice in
-        1)
-            # Prompt user to enter the disk name
-            read -p "Enter the disk name (e.g., /dev/sda): " disk
+    echo "Partition successfully mounted at $mount_point."
+}
 
-            # Partition the disk using cfdisk
-            partition_disk "$disk"
-            ;;
-        2)
-            # Prompt user to enter the partition name
-            read -p "Enter the partition name (e.g., /dev/sda1), or 'q' to go back: " partition
-            if [[ $partition == "q" ]]; then
-                continue
-            fi
+# Prompt for the disk to work with
+echo "Please enter the disk to work with (e.g., /dev/sda):"
+read disk
 
-            # Prompt user to confirm the partition selection
-            read -p "Are you sure you want to format and mount $partition? (y/n): " confirm
-            if [[ ! $confirm =~ ^[Yy]$ ]]; then
-                echo "Skipping partition $partition."
-                continue
-            fi
+# Prompt for the action
+echo "Please select an action:"
+echo "1. Use cfdisk to partition the disk"
+echo "2. Partition and format a new partition"
+echo "3. Mount an existing partition to /mnt/home"
+echo "4. Mount an existing partition to /mnt/boot"
+read -p "Enter the action number: " action
 
-            # Prompt user to choose filesystem
-            read -p "Choose the filesystem type (ext4 or fat32): " filesystem
+if [[ $action -eq 1 ]]; then
+    # Use cfdisk to partition the disk
+    partition_disk
 
-            # Prompt user to enter the partition label
-            read -p "Enter the partition label: " label
+elif [[ $action -eq 2 ]]; then
+    # Partition and format a new partition
+    partition_disk
 
-            # Prompt user to enter the mount point
-            read -p "Enter the mount point: " mount_point
+    # Prompt for the partition number
+    echo "Please enter the partition number to format (e.g., 1):"
+    read partition
 
-            # Format, label, and mount the partition
-            format_label_mount_partition "$partition" "$filesystem"
+    # Prompt for the label
+    echo "Please enter the label for the partition:"
+    read label
+
+    format_partition
+    mount_partition
+
+elif [[ $action -eq 3 ]]; then
+    # Mount an existing partition to /mnt/home
+    echo "Please enter the partition to mount (e.g., /dev/sda1):"
+    read partition
+
+    # Check if the partition exists
+    if [[ ! -e $partition ]]; then
+        echo "Error: Partition $partition does not exist."
+        exit 1
+    fi
+
+    mount_point="/mnt/home"
+    mkdir -p $mount_point
+    mount_partition
+
+elif [[ $action -eq 4 ]]; then
+    # Mount an existing partition to /mnt/boot
+    echo "Please enter the partition to mount (e.g., /dev/sda1):"
+    read partition
+
+    # Check if the partition exists
+    if [[ ! -e $partition ]]; then
+        echo "Error: Partition $partition does not exist."
+        exit 1
+    fi
+
+    mount_point="/mnt/boot"
+    mkdir -p $mount_point
+    mount_partition
+
+else
+    echo "Invalid action selected."
+    exit 1
+fi
