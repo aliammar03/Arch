@@ -35,14 +35,37 @@ set_clock() {
     echo "Clock has been set to the timezone $timezone."
 }
 
-# Prompt the user to enter the desired locale
-read -p "Enter the locale to generate (e.g., en_GB.UTF-8): " locale
+# Prompt the user to choose the desired locale from a list
+echo "Choose the locale to generate:"
+echo "1. en_US.UTF-8"
+echo "2. en_GB.UTF-8"
+echo "3. en_AU.UTF-8"
+echo "4. en_CA.UTF-8"
+echo "5. en_IN.UTF-8"
+read -p "Enter your choice (1-5): " locale_choice
 
-# Validate the locale format
-if [[ ! $locale =~ ^[a-z]{2}_[A-Z]{2}\.(UTF-8|utf8)$ ]]; then
-    echo "Invalid locale format. Please try again."
-    exit 1
-fi
+# Set the locale based on the user's choice
+case $locale_choice in
+    1)
+        locale="en_US.UTF-8"
+        ;;
+    2)
+        locale="en_GB.UTF-8"
+        ;;
+    3)
+        locale="en_AU.UTF-8"
+        ;;
+    4)
+        locale="en_CA.UTF-8"
+        ;;
+    5)
+        locale="en_IN.UTF-8"
+        ;;
+    *)
+        echo "Invalid choice. Please try again."
+        exit 1
+        ;;
+esac
 
 # Generate and set the locale
 generate_locale "$locale"
@@ -64,14 +87,8 @@ new_entries=(
     "127.0.1.1    $hostname.localdomain    localhost"
 )
 
-# Backup the original hosts file
-cp /etc/hosts /etc/hosts.bak
-
 # Clear the hosts file
 echo -n > /etc/hosts
-
-# Backup the original hostname file
-cp /etc/hostname /etc/hostname.bak
 
 # Update the hostname file
 echo "$hostname" > /etc/hostname
@@ -84,4 +101,3 @@ done
 echo "Hostname has been changed to $hostname and new entries have been added to the hosts file."
 
 exit 0
-
