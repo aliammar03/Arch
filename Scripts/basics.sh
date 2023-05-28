@@ -102,4 +102,12 @@ echo "Hostname has been changed to $hostname and new entries have been added to 
 
 chmod +x ./*
 
+# Enable parallel downloads, color, VerbosePkgLists, and ILoveCandy
+sed -i 's/^#Color$/Color/' /etc/pacman.conf
+sed -i 's/^#VerbosePkgLists$/VerbosePkgLists/' /etc/pacman.conf
+sed -i '38s/.*/ILoveCandy/' /etc/pacman.conf
+sed -i 's/^#ParallelDownloads = 5$/ParallelDownloads = 15/' /etc/pacman.conf
+
+echo "Pacman has been configured successfully!"
+
 exit 0
