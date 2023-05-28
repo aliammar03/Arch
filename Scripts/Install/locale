@@ -22,19 +22,6 @@ generate_locale() {
     echo "Locale $locale has been generated and set successfully."
 }
 
-# Function to change the hostname
-change_hostname() {
-    local hostname=$1
-
-    # Set the new hostname
-    echo "$hostname" > /etc/hostname
-
-    # Update the hostname in the hosts file
-    sed -i "s/127.0.0.1.*/127.0.0.1\t$hostname localhost/" /etc/hosts
-
-    echo "Hostname has been changed to $hostname."
-}
-
 # Function to set the clock
 set_clock() {
     local timezone=$1
@@ -63,8 +50,6 @@ generate_locale "$locale"
 # Prompt the user to enter the new hostname
 read -p "Enter the new hostname: " hostname
 
-# Change the hostname
-change_hostname "$hostname"
 
 # Prompt the user to enter the desired timezone
 read -p "Enter the timezone (e.g., Asia/Karachi): " timezone
@@ -72,4 +57,25 @@ read -p "Enter the timezone (e.g., Asia/Karachi): " timezone
 # Set the clock
 set_clock "$timezone"
 
+# Prompt the user to enter the hostname
+read -p "Enter the hostname: " hostname
+
+# Define the values to be added to the hosts file
+new_entries=(
+    "127.0.0.1    localhost"
+    "::1          localhost"
+    "127.0.1.1    $hostname.localdomain    localhost"
+)
+
+# Update the hostname file
+echo "$hostname" > /etc/hostname
+
+# Add the new entries to the hosts file
+for entry in "${new_entries[@]}"; do
+    echo "$entry" >> /etc/hosts
+done
+
+echo "Hostname has been changed to $hostname and new entries have been added to the hosts file."
+
 exit 0
+
