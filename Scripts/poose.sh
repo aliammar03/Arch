@@ -45,7 +45,7 @@ scan_disk_for_partitions() {
 # Function to view the current disk structure
 view_disk_structure() {
     echo "Current disk structure:"
-    fdisk -l $disk
+    lsblk -f
     echo "----------------------------------------"
 }
 
@@ -81,12 +81,13 @@ while true; do
     # Prompt for the action
     echo "Please select an action:"
     echo "1. Use cfdisk to partition the disk"
-    echo "2. Partition and format root (ext4)"
-    echo "3. Mount boot (format as FAT32 and flag as ESP)"
-    echo "4. Mount home"
+    echo "2. Prepare root"
+    echo "3. Prepare boot"
+    echo "4. Prepare home"
     echo "5. View current disk structure"
     echo "6. Start Pacstrap"
-    echo "7. Exit"
+    echo "7. ArchChroot"    
+    echo "8. Exit"
     read -p "Enter the action number: " action
 
     if [[ $action -eq 1 ]]; then
@@ -144,6 +145,11 @@ while true; do
         launch_pacstrap_script
 
     elif [[ $action -eq 7 ]]; then
+        # ArchChroot
+        echo "ArchChrooting into new install"
+        arch-chroot /mnt
+        
+    elif [[ $action -eq 8 ]]; then
         # Exit the script
         echo "Exiting the script..."
         break
