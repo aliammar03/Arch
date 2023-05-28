@@ -64,6 +64,15 @@ new_entries=(
     "127.0.1.1    $hostname.localdomain    localhost"
 )
 
+# Backup the original hosts file
+cp /etc/hosts /etc/hosts.bak
+
+# Clear the hosts file
+echo -n > /etc/hosts
+
+# Backup the original hostname file
+cp /etc/hostname /etc/hostname.bak
+
 # Update the hostname file
 echo "$hostname" > /etc/hostname
 
