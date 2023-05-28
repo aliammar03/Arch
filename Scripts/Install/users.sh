@@ -69,7 +69,6 @@ while true; do
             read -p "Do you want to add $username to the wheel group? (yes/no): " add_to_wheel
 
             add_user "$username" "$add_to_wheel"
-            change_password "$username"
             ;;
         no)
             break
