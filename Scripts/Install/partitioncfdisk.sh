@@ -33,12 +33,12 @@ mount_partition() {
     echo "Partition successfully mounted at $mount_point."
 }
 
+# Prompt for the disk to work with
+echo "Please enter the disk to work with (e.g., /dev/sda):"
+read disk
+
 # Loop until the user chooses to exit
 while true; do
-    # Prompt for the disk to work with
-    echo "Please enter the disk to work with (e.g., /dev/sda):"
-    read disk
-
     # Prompt for the action
     echo "Please select an action:"
     echo "1. Use cfdisk to partition the disk"
