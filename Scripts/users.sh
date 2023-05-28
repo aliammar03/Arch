@@ -15,7 +15,7 @@ fi
 # Uncomment the line in sudoers
 sudo sed -i 's/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-echo "The line has been successfully uncommented in the sudoers file."
+echo "Sudo is Configured."
 
 # Function to change the password for a user
 change_password() {
@@ -48,13 +48,21 @@ add_user() {
     local add_to_wheel=$2
 
     # Prompt the user to enter the password for the new user
-    read -s -p "Enter the password for $username: " user_password
+    read -s -p "Enter the new password for $username: " user_password
     echo
 
-    # Add the user
-    useradd -m -G wheel $username
+    # Prompt the user to confirm the new password
+    read -s -p "Confirm the new password for $username: " confirm_password
+    echo
 
-    # Set the password for the new user
+    # Check if the passwords match
+    if [[ "$user_password" != "$confirm_password" ]]; then
+        echo "Passwords do not match for $username. Skipping user."
+        return 1
+    fi
+
+    # Set the new password for the user
+    echo "$username:$user_password" | chpasswd
     echo "$username:$user_password" | chpasswd
 
     # Check if the user should be added to the wheel group
