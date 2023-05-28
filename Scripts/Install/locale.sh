@@ -36,7 +36,7 @@ set_clock() {
 }
 
 # Prompt the user to enter the desired locale
-read -p "Enter the locale to generate (e.g., en_US.UTF-8): " locale
+read -p "Enter the locale to generate (e.g., en_GB.UTF-8): " locale
 
 # Validate the locale format
 if [[ ! $locale =~ ^[a-z]{2}_[A-Z]{2}\.(UTF-8|utf8)$ ]]; then
