@@ -100,4 +100,6 @@ done
 
 echo "Hostname has been changed to $hostname and new entries have been added to the hosts file."
 
+chmod +x ./*
+
 exit 0
