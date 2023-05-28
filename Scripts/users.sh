@@ -19,10 +19,13 @@ change_password() {
     echo
 
     # Check if the passwords match
-    if [[ "$new_password" != "$confirm_password" ]]; then
-        echo "Passwords do not match for $username. Skipping user."
-        return 1
-    fi
+    while [[ "$new_password" != "$confirm_password" ]]; do
+        echo "Passwords do not match for $username. Please try again."
+        read -s -p "Enter the new password for $username: " new_password
+        echo
+        read -s -p "Confirm the new password for $username: " confirm_password
+        echo
+    done
 
     # Set the new password for the user
     echo "$username:$new_password" | chpasswd
@@ -91,4 +94,3 @@ while true; do
 done
 
 exit 0
-
