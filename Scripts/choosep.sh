@@ -33,6 +33,15 @@ mount_partition() {
     echo "Partition successfully mounted at $mount_point."
 }
 
+# Function to scan disk for partitions and allow the user to choose one
+scan_disk_for_partitions() {
+    echo "Scanning the disk for partitions..."
+    fdisk -l $disk
+
+    echo "Please enter the partition number to select (e.g., 1):"
+    read partition
+}
+
 # Retrieve the list of disks in the system
 disks=($(lsblk -o NAME -n -d))
 
@@ -69,25 +78,8 @@ while true; do
         partition_disk
 
     elif [[ $action -eq 2 ]]; then
-        # Retrieve the list of available partitions on the selected disk
-        partitions=($(lsblk -o NAME -n -d $disk))
-
-        # Prompt for the partition to format as ext4
-        echo "Please select a partition to format as ext4:"
-        for ((i=0; i<${#partitions[@]}; i++)); do
-            echo "$((i+1)). ${partitions[i]}"
-        done
-
-        read -p "Enter the partition number: " partition_number
-        selected_partition_index=$((partition_number-1))
-
-        # Check if the selected partition number is valid
-        if [[ $selected_partition_index -lt 0 || $selected_partition_index -ge ${#partitions[@]} ]]; then
-            echo "Invalid partition number."
-            continue
-        fi
-
-        partition="${partitions[selected_partition_index]}"
+        # Prompt for partition selection
+        scan_disk_for_partitions
 
         # Prompt to format the partition
         read -p "Do you want to format the partition as ext4? (y/n): " format_choice
@@ -99,11 +91,9 @@ while true; do
         mkdir -p $mount_point
         mount_partition
 
-
     elif [[ $action -eq 3 ]]; then
-        # Prompt for the partition number
-        echo "Please enter the partition number to format (e.g., 1):"
-        read partition
+        # Prompt for partition selection
+        scan_disk_for_partitions
 
         # Prompt to format the partition
         read -p "Do you want to format the partition as FAT32 and flag it as ESP? (y/n): " format_choice
@@ -116,9 +106,8 @@ while true; do
         mount_partition
 
     elif [[ $action -eq 4 ]]; then
-        # Prompt for the partition number
-        echo "Please enter the partition number to format (e.g., 1):"
-        read partition
+        # Prompt for partition selection
+        scan_disk_for_partitions
 
         # Prompt to format the partition
         read -p "Do you want to format the partition as ext4? (y/n): " format_choice
