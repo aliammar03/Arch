@@ -36,9 +36,9 @@ read disk
 # Prompt for the action
 echo "Please select an action:"
 echo "1. Use cfdisk to partition the disk"
-echo "2. Partition and format a new partition"
-echo "3. Mount an existing partition to /mnt/home"
-echo "4. Mount an existing partition to /mnt/boot"
+echo "2. Partition and format root"
+echo "3. Mount boot"
+echo "4. Mount home"
 read -p "Enter the action number: " action
 
 if [[ $action -eq 1 ]]; then
@@ -61,21 +61,6 @@ elif [[ $action -eq 2 ]]; then
     mount_partition
 
 elif [[ $action -eq 3 ]]; then
-    # Mount an existing partition to /mnt/home
-    echo "Please enter the partition to mount (e.g., /dev/sda1):"
-    read partition
-
-    # Check if the partition exists
-    if [[ ! -e $partition ]]; then
-        echo "Error: Partition $partition does not exist."
-        exit 1
-    fi
-
-    mount_point="/mnt/home"
-    mkdir -p $mount_point
-    mount_partition
-
-elif [[ $action -eq 4 ]]; then
     # Mount an existing partition to /mnt/boot
     echo "Please enter the partition to mount (e.g., /dev/sda1):"
     read partition
@@ -87,6 +72,21 @@ elif [[ $action -eq 4 ]]; then
     fi
 
     mount_point="/mnt/boot"
+    mkdir -p $mount_point
+    mount_partition
+
+elif [[ $action -eq 4 ]]; then
+    # Mount an existing partition to /mnt/home
+    echo "Please enter the partition to mount (e.g., /dev/sda1):"
+    read partition
+
+    # Check if the partition exists
+    if [[ ! -e $partition ]]; then
+        echo "Error: Partition $partition does not exist."
+        exit 1
+    fi
+
+    mount_point="/mnt/home"
     mkdir -p $mount_point
     mount_partition
 
