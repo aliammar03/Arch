@@ -39,10 +39,10 @@ change_hostname() {
 set_clock() {
     local timezone=$1
 
-    # Set the timezone
-    timedatectl set-timezone $timezone
+    # Set the timezone by creating a symlink
+    ln -sf "/usr/share/zoneinfo/$timezone" /etc/localtime
 
-    # Synchronize the system clock
+    # Update the hardware clock
     hwclock --systohc
 
     echo "Clock has been set to the timezone $timezone."
@@ -73,4 +73,3 @@ read -p "Enter the timezone (e.g., Asia/Karachi): " timezone
 set_clock "$timezone"
 
 exit 0
-
