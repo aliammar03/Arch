@@ -42,6 +42,20 @@ scan_disk_for_partitions() {
     read partition
 }
 
+# Function to view the current disk structure
+view_disk_structure() {
+    echo "Current disk structure:"
+    fdisk -l $disk
+    echo "----------------------------------------"
+}
+
+# Function to launch the pacstrap.sh script
+launch_pacstrap_script() {
+    echo "Launching the pacstrap.sh script..."
+    chmod +x pacstrap.sh
+    ./pacstrap.sh
+}
+
 # Retrieve the list of disks in the system
 disks=($(lsblk -o NAME -n -d))
 
