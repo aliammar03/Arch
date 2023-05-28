@@ -37,22 +37,14 @@ add_user() {
     local add_to_wheel=$2
 
     # Prompt the user to enter the password for the new user
-    read -s -p "Enter the new password for $username: " user_password
+    read -s -p "Enter the password for $username: " user_password
     echo
 
-    # Prompt the user to confirm the new password
-    read -s -p "Confirm the new password for $username: " confirm_password
-    echo
+    # Add the user
+    useradd -m -G wheel $username
 
-    # Check if the passwords match
-    if [[ "$user_password" != "$confirm_password" ]]; then
-        echo "Passwords do not match for $username. Skipping user."
-        return 1
-    fi
-
-    # Set the new password for the user
+    # Set the password for the new user
     echo "$username:$user_password" | chpasswd
-
 
     # Check if the user should be added to the wheel group
     if [[ $add_to_wheel == "yes" ]]; then
