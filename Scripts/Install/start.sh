@@ -6,6 +6,24 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+# Function to retry a command with a specified number of attempts
+retry_command() {
+    local command=$1
+    local max_attempts=$2
+    local attempt=1
+
+    until $command; do
+        if [[ $attempt -eq $max_attempts ]]; then
+            echo "Failed to execute the command after $max_attempts attempts."
+            exit 1
+        fi
+
+        echo "Attempt $attempt failed. Retrying..."
+        ((attempt++))
+        sleep 1
+    done
+}
+
 # Update Time
 timedatectl set-timezone Asia/Karachi
 
@@ -26,9 +44,14 @@ echo "Pacman has been configured successfully!"
 # Restart Pacman's package database
 pacman -Syy
 
-# Install Base System 
-pacstrap -i /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode reflector git sudo
+# Install Base System with retry
+retry_command "pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode reflector git sudo nano" 3
 
-#Fstab
+# Fstab
 genfstab -U /mnt >> /mnt/etc/fstab
 
+# Copy the isntaller scripts
+cp -r ~/arch /mnt
+
+# ArchChroot
+arch-chroot /mnt
