@@ -6,17 +6,23 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# Function to format a partition as ext4 and label it
+# Function to partition the disk using cfdisk
+partition_disk() {
+    echo "Partitioning the disk using cfdisk..."
+    cfdisk $disk
+}
+
+# Function to format a partition as ext4
 format_partition() {
     echo "Formatting the partition as ext4..."
-    mkfs.ext4 -L $label "${disk}${partition}"
-    echo "Partition successfully formatted as ext4 and labeled as $label."
+    mkfs.ext4 "${disk}${partition}"
 }
 
 # Function to mount a partition at the specified mount point
 mount_partition() {
     echo "Mounting the partition at $mount_point..."
     mount "${disk}${partition}" $mount_point
+
     echo "Partition successfully mounted at $mount_point."
 }
 
@@ -26,35 +32,25 @@ read disk
 
 # Prompt for the action
 echo "Please select an action:"
-echo "1. Partition the disk using cfdisk"
-echo "2. Partition and format a new partition"
-echo "3. Mount an existing partition to /mnt/boot"
-echo "4. Mount an existing partition to /mnt/home"
+echo "1. Use cfdisk to partition the disk"
+echo "2. Partition and format root"
+echo "3. Mount boot"
+echo "4. Mount home"
 read -p "Enter the action number: " action
 
 if [[ $action -eq 1 ]]; then
-    # Partition the disk using cfdisk
-    echo "Partitioning the disk using cfdisk..."
-    cfdisk $disk
+    # Use cfdisk to partition the disk
+    partition_disk
 
 elif [[ $action -eq 2 ]]; then
     # Partition and format a new partition
-    echo "Please enter the partition to format and mount (e.g., /dev/sda1):"
+    partition_disk
+
+    # Prompt for the partition number
+    echo "Please enter the partition number to format (e.g., 1):"
     read partition
 
-    # Check if the partition exists
-    if [[ ! -e $partition ]]; then
-        echo "Error: Partition $partition does not exist."
-        exit 1
-    fi
-
-    # Prompt for the label
-    echo "Please enter the label for the partition:"
-    read label
-
     format_partition
-    mount_point="/mnt"
-    mkdir -p $mount_point
     mount_partition
 
 elif [[ $action -eq 3 ]]; then
@@ -81,17 +77,6 @@ elif [[ $action -eq 4 ]]; then
     if [[ ! -e $partition ]]; then
         echo "Error: Partition $partition does not exist."
         exit 1
-    fi
-
-    echo -n "Do you want to format the partition before mounting? (yes/no): "
-    read answer
-
-    if [[ $answer == "yes" ]]; then
-        # Prompt for the label
-        echo "Please enter the label for the partition:"
-        read label
-
-        format_partition
     fi
 
     mount_point="/mnt/home"
