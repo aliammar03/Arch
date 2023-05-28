@@ -6,12 +6,35 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+# Function to mount a partition
+mount_partition() {
+    local partition=$1
+    local mount_point=$2
+
+    # Create mount point directory if it doesn't exist
+    if [[ ! -d $mount_point ]]; then
+        mkdir -p $mount_point
+        echo "Mount point directory $mount_point created."
+    fi
+
+    # Mount the partition
+    mount $partition $mount_point
+
+    echo "Partition $partition has been mounted on $mount_point."
+}
+
 # Function to format, label, and mount a partition
 format_label_mount_partition() {
     local partition=$1
     local filesystem=$2
     local label=$3
     local mount_point=$4
+
+    # Check if the partition exists
+    if [[ ! -b $partition ]]; then
+        echo "Partition $partition does not exist. Skipping."
+        return
+    fi
 
     # Format the partition with the chosen filesystem
     if [[ $filesystem == "ext4" ]]; then
@@ -26,16 +49,8 @@ format_label_mount_partition() {
     # Set the partition label
     e2label $partition $label
 
-    # Create mount point directory if it doesn't exist
-    if [[ ! -d $mount_point ]]; then
-        mkdir -p $mount_point
-        echo "Mount point directory $mount_point created."
-    fi
-
     # Mount the partition
-    mount $partition $mount_point
-
-    echo "Partition $partition has been formatted with $filesystem, labeled as $label, and mounted on $mount_point."
+    mount_partition $partition $mount_point
 }
 
 # Function to partition a disk using cfdisk
@@ -52,10 +67,11 @@ lsblk
 while true; do
     echo "1. Partition a disk using cfdisk"
     echo "2. Format, label, and mount a partition"
-    echo "3. Quit"
+    echo "3. Mount a partition (without formatting)"
+    echo "4. Quit"
 
     # Prompt user for action
-    read -p "Enter your choice (1, 2, or 3): " choice
+    read -p "Enter your choice (1, 2, 3, or 4): " choice
 
     case $choice in
         1)
@@ -89,15 +105,4 @@ while true; do
             read -p "Enter the mount point: " mount_point
 
             # Format, label, and mount the partition
-            format_label_mount_partition "$partition" "$filesystem" "$label" "$mount_point"
-            ;;
-        3)
-            break
-            ;;
-        *)
-            echo "Invalid choice. Please try again."
-            ;;
-    esac
-done
-
-exit 0
+            format_label_mount_partition "$partition" "$filesystem"
