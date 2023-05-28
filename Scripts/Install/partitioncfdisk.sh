@@ -50,8 +50,14 @@ while true; do
         echo "Please enter the partition number to format (e.g., 1):"
         read partition
 
-        format_partition
-        mount_point="/mnt/"
+        # Prompt to format the partition
+        read -p "Do you want to format the partition as ext4? (y/n): " format_choice
+        if [[ $format_choice == "y" || $format_choice == "Y" ]]; then
+            format_partition
+        fi
+        
+        mount_point="/mnt/home"
+        mkdir -p $mount_point
         mount_partition
 
     elif [[ $action -eq 3 ]]; then
@@ -70,24 +76,17 @@ while true; do
         mount_partition
 
     elif [[ $action -eq 4 ]]; then
-        # Mount an existing partition to /mnt/home
-        echo "Please enter the partition to mount (e.g., /dev/sda1):"
+        # Prompt for the partition number
+        echo "Please enter the partition number to format (e.g., 1):"
         read partition
-
-        # Check if the partition exists
-        if [[ ! -e $partition ]]; then
-            echo "Error: Partition $partition does not exist."
-            continue
-        fi
-
-        mount_point="/mnt/home"
 
         # Prompt to format the partition
         read -p "Do you want to format the partition as ext4? (y/n): " format_choice
         if [[ $format_choice == "y" || $format_choice == "Y" ]]; then
             format_partition
         fi
-
+        
+        mount_point="/mnt/home"
         mkdir -p $mount_point
         mount_partition
 
