@@ -25,3 +25,10 @@ echo "Pacman has been configured successfully!"
 
 # Restart Pacman's package database
 pacman -Syy
+
+# Install Base System 
+pacstrap -i /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode reflector git sudo
+
+#Fstab
+genfstab -U /mnt >> /mnt/etc/fstab
+
