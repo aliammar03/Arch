@@ -61,7 +61,7 @@ add_user() {
     echo "$username:$user_password" | chpasswd
 
     # Check if the user should be added to the wheel group
-    if [[ $add_to_wheel == "yes" ]]; then
+    if [[ $add_to_wheel == "y" ]]; then
         usermod -aG wheel "$username"
         echo "Added $username to the wheel group."
     fi
@@ -75,16 +75,16 @@ change_password "root"
 
 # Add additional users
 while true; do
-    read -p "Do you want to add an additional user? (yes/no): " choice
+    read -p "Do you want to add an additional user? (y/n): " choice
 
     case $choice in
-        yes)
+        y)
             read -p "Enter the username for the new user: " username
-            read -p "Do you want to add $username to the wheel group? (yes/no): " add_to_wheel
+            read -p "Do you want to add $username to the wheel group? (y/n): " add_to_wheel
 
             add_user "$username" "$add_to_wheel"
             ;;
-        no)
+        n)
             break
             ;;
         *)
