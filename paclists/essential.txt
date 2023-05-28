@@ -15,3 +15,5 @@ man-db
 man-pages
 memtest86+
 samba
+cron
+rsync
