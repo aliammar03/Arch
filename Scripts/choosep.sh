@@ -15,14 +15,14 @@ partition_disk() {
 # Function to format a partition as ext4
 format_partition_ext4() {
     echo "Formatting the partition as ext4..."
-    mkfs.ext4 "${disk}${partition}"
+    mkfs -t ext4 "${disk}${partition}"
 }
 
 # Function to format a partition as FAT32 and flag it as ESP using parted
 format_partition_fat32_esp() {
     echo "Formatting the partition as FAT32 and flagging it as ESP..."
     parted -s $disk set $partition esp on
-    mkfs.fat -F32 "${disk}${partition}"
+    mkfs.fat -F 32 "${disk}${partition}"
 }
 
 # Function to mount a partition at the specified mount point
