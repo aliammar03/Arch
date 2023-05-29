@@ -49,7 +49,7 @@ mount_partition() {
 # Function to scan disk for partitions and allow the user to choose one
 scan_disk_for_partitions() {
     echo "Scanning the disk for partitions..."
-    fdisk -l $disk
+    lsblk -f $disk
 
     echo "Please enter the partition number to select (e.g., 1):"
     read partition
