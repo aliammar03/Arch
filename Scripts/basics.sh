@@ -6,11 +6,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# Make all the scripts executable
-chmod +x ./*
-chmod +x ./apps/*
-chmod +x ./config/*
-
 # Function to generate and set the locale
 generate_locale() {
     local locale=$1
