@@ -28,7 +28,7 @@ run_paru() {
     chmod +x paru.sh
 
     # Execute paru.sh
-    ./paru.sh
+    ./scripts/apps/paru.sh
   else
     echo "paru.sh not found!"
     sleep 1
@@ -47,7 +47,7 @@ run_nordvpn() {
     chmod +x nordvpn.sh
 
     # Execute nordvpn.sh
-    ./nordvpn.sh
+    ./scripts/apps/nordvpn.sh
   else
     echo "nordvpn.sh not found!"
     sleep 1
