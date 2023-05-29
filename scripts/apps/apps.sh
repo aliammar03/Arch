@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APPS_DIR="apps"  # Directory where the additional scripts are located
+APPS_DIR="./scripts/apps"  # Directory where the additional scripts are located
 
 # Function to install packages from a file
 install_packages() {
