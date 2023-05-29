@@ -2,4 +2,4 @@ firefox
 flatpak
 mpv
 qbittorrent
-
+clonezilla
