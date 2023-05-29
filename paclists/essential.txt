@@ -1,14 +1,18 @@
 
 sudo
 networkmanager
+networkmanager-openvpn
 curl
 wget
+jq
 neofetch
 ntfs-3g
 openssh
 parted
 fish
 efibootmgr
+e2fsprogs
+edk2-shell
 dosfstools
 mtools
 man-db
@@ -17,3 +21,9 @@ memtest86+
 samba
 cron
 rsync
+exfatprogs
+openvpn
+refind
+testdisk
+zsh
+pacman-contrib
