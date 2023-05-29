@@ -1,14 +1,15 @@
 #!/bin/bash
 
-# Make all the scripts executable
-chmod +x ./*
-chmod +x ./apps/*
-
 # Check if the script is being run as root
 if [[ $EUID -ne 0 ]]; then
     echo "This script must be run as root."
     exit 1
 fi
+
+# Make all the scripts executable
+chmod +x ./*
+chmod +x ./apps/*
+chmod +x ./config/*
 
 # Function to generate and set the locale
 generate_locale() {
