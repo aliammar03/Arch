@@ -110,4 +110,15 @@ sed -i 's/^#ParallelDownloads = 5$/ParallelDownloads = 15/' /etc/pacman.conf
 
 echo "Pacman has been configured successfully!"
 
+# Check if the wheel group line is already uncommented in sudoers
+if grep -q "^%wheel ALL=(ALL:ALL) ALL" /etc/sudoers; then
+    echo "Sudo is already enabled for the wheel group."
+    exit 0
+fi
+
+# Uncomment the line in sudoers
+sudo sed -i 's/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
+
+echo "Sudo is now enabled for the wheel group."
+
 exit 0
