@@ -5,8 +5,8 @@ script_dir="./scripts"
 
 # Make all the scripts executable
 chmod +x ./*
-chmod +x ./apps/*
 chmod +x $script_dir/*
+chmod +x $script_dir/apps/*
 
 # Script file paths
 basics_script="$script_dir/basics.sh"
