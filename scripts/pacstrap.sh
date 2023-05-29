@@ -45,7 +45,7 @@ echo "Pacman has been configured successfully!"
 pacman -Syy
 
 # Install Base System with retry
-retry_command "pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode reflector git sudo nano" 10
+retry_command "pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware intel-ucode reflector git nano sudo networkmanager pacman-contrib efibootmgr e2fsprogs edk2-shell man-db man-pages ntfs-3g openssh parted" 10
 
 # Fstab
 genfstab -U /mnt >> /mnt/etc/fstab
