@@ -12,7 +12,7 @@ bootctl install
 # Scan disks and display them for selection
 echo "Scanning disks..."
 disks=()
-mapfile -t disks < <(lsblk -nrdo NAME,TYPE | awk '$2=="disk"{print $1}')
+mapfile -t disks < <(lsblk -rno NAME,TYPE | awk '$2=="disk"{print $1}')
 echo "Available disks:"
 for index in "${!disks[@]}"; do
     echo "$(($index + 1)). ${disks[$index]}"
@@ -33,7 +33,7 @@ disk=${disks[$(($disk_number - 1))]}
 # Scan partitions of the selected disk and display them for selection
 echo "Scanning partitions of /dev/$disk..."
 partitions=()
-mapfile -t partitions < <(lsblk -nrdo NAME /dev/"$disk" | awk '{if ($1 != disk) print $1; disk=$1}')
+mapfile -t partitions < <(lsblk -rno NAME /dev/"$disk")
 echo "Available partitions:"
 for index in "${!partitions[@]}"; do
     echo "$(($index + 1)). ${partitions[$index]}"
