@@ -30,7 +30,7 @@ display_menu() {
     5) install_packages print.txt ;;
     6) install_packages gnome.txt ;;
     7) install_all_packages ;;
-    8) ./apps.sh ;;  # Launch apps.sh script
+    8) ./scripts/apps/apps.sh ;;  # Launch apps.sh script
     0) echo "Exiting..." ;;
     *) echo "Invalid choice. Please try again." ;;
   esac
