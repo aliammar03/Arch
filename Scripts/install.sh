@@ -15,20 +15,33 @@ partition_disk() {
 # Function to format a partition as ext4
 format_partition_ext4() {
     echo "Formatting the partition as ext4..."
-    mkfs -t ext4 "${disk}${partition}"
+    if [[ $disk_type == "nvme" ]]; then
+        mkfs -t ext4 "${disk}p${partition}"
+    else
+        mkfs -t ext4 "${disk}${partition}"
+    fi
 }
 
 # Function to format a partition as FAT32 and flag it as ESP using parted
 format_partition_fat32_esp() {
     echo "Formatting the partition as FAT32 and flagging it as ESP..."
-    parted -s $disk set $partition esp on
-    mkfs.fat -F 32 "${disk}${partition}"
+    if [[ $disk_type == "nvme" ]]; then
+        parted -s $disk set ${partition} esp on
+        mkfs.fat -F 32 "${disk}p${partition}"
+    else
+        parted -s $disk set ${partition} esp on
+        mkfs.fat -F 32 "${disk}${partition}"
+    fi
 }
 
 # Function to mount a partition at the specified mount point
 mount_partition() {
     echo "Mounting the partition at $mount_point..."
-    mount "${disk}${partition}" $mount_point
+    if [[ $disk_type == "nvme" ]]; then
+        mount "${disk}p${partition}" $mount_point
+    else
+        mount "${disk}${partition}" $mount_point
+    fi
 
     echo "Partition successfully mounted at $mount_point."
 }
@@ -57,7 +70,7 @@ launch_pacstrap_script() {
 }
 
 # Retrieve the list of disks in the system
-disks=($(lsblk -o NAME -n -d))
+disks=($(lsblk -o NAME -n -d | grep -E "^(nvme|sda|sdb)"))
 
 # Prompt for the disk to work with
 echo "Please select a disk:"
@@ -75,6 +88,7 @@ if [[ $selected_disk_index -lt 0 || $selected_disk_index -ge ${#disks[@]} ]]; th
 fi
 
 disk="/dev/${disks[selected_disk_index]}"
+disk_type=$(echo "${disks[selected_disk_index]}" | cut -c 1-4)
 
 # Loop until the user chooses to exit
 while true; do
