@@ -26,7 +26,7 @@ display_menu() {
     3) install_packages media.txt ;;
     4) install_packages fonts.txt ;;
     5) install_packages print.txt ;;
-    6) ./apps/apps.sh ;;  # Launch apps.sh script
+    6) ./apps.sh ;;  # Launch apps.sh script
     0) echo "Exiting..." ;;
     *) echo "Invalid choice. Please try again." ;;
   esac
