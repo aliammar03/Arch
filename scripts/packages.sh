@@ -3,7 +3,7 @@
 # Function to install packages from a file
 install_packages() {
   file="$1"
-  pacman -S --noconfirm - < "./script/paclists/$file"
+  pacman -S --noconfirm - < "./scripts/paclists/$file"
 }
 
 # Function to display the menu
