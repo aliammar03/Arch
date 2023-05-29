@@ -1,0 +1,3 @@
+intel-media-driver
+libva-utils
+linux-headers
