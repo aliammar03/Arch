@@ -9,10 +9,31 @@ fi
 # Install systemd-boot
 bootctl install
 
-# Scan partitions and display them for selection
-echo "Scanning partitions..."
+# Scan disks and display them for selection
+echo "Scanning disks..."
+disks=()
+mapfile -t disks < <(lsblk -nrdo NAME,TYPE | awk '$2=="disk"{print $1}')
+echo "Available disks:"
+for index in "${!disks[@]}"; do
+    echo "$(($index + 1)). ${disks[$index]}"
+done
+
+# Prompt the user to choose the disk
+read -p "Enter the number of the disk (e.g., 1): " disk_number
+
+# Validate the user input
+if [[ ! $disk_number =~ ^[0-9]+$ ]] || [[ $disk_number -lt 1 ]] || [[ $disk_number -gt ${#disks[@]} ]]; then
+    echo "Invalid disk number. Exiting."
+    exit 1
+fi
+
+# Get the selected disk
+disk=${disks[$(($disk_number - 1))]}
+
+# Scan partitions of the selected disk and display them for selection
+echo "Scanning partitions of /dev/$disk..."
 partitions=()
-mapfile -t partitions < <(lsblk -nrdo NAME)
+mapfile -t partitions < <(lsblk -nrdo NAME /dev/"$disk" | awk '{if ($1 != disk) print $1; disk=$1}')
 echo "Available partitions:"
 for index in "${!partitions[@]}"; do
     echo "$(($index + 1)). ${partitions[$index]}"
