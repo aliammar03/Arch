@@ -6,6 +6,11 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+# Make all the scripts executable
+chmod +x ./*
+chmod +x ./apps/*
+chmod +x ./config/*
+
 # Function to partition the disk using cfdisk
 partition_disk() {
     echo "Partitioning the disk using cfdisk..."
