@@ -1,5 +1,7 @@
 #!/bin/bash
 
+APPS_DIR="apps"  # Directory where the additional scripts are located
+
 # Function to install packages from a file
 install_packages() {
   clear
@@ -10,7 +12,7 @@ install_packages() {
   while IFS= read -r package || [[ -n "$package" ]]; do
     # Install each package using Pacman
     sudo pacman -S --noconfirm "$package"
-  done < packages.txt
+  done < ./scripts/paclists/packages.txt
 
   echo "Packages installed successfully."
   sleep 1
@@ -23,12 +25,12 @@ run_paru() {
   sleep 1
 
   # Check if paru.sh exists
-  if [[ -f "paru.sh" ]]; then
+  if [[ -f "$APPS_DIR/paru.sh" ]]; then
     # Make paru.sh executable
-    chmod +x paru.sh
+    chmod +x "$APPS_DIR/paru.sh"
 
     # Execute paru.sh
-    ./scripts/apps/paru.sh
+    "$APPS_DIR/paru.sh"
   else
     echo "paru.sh not found!"
     sleep 1
@@ -42,12 +44,12 @@ run_nordvpn() {
   sleep 1
 
   # Check if nordvpn.sh exists
-  if [[ -f "nordvpn.sh" ]]; then
+  if [[ -f "$APPS_DIR/nordvpn.sh" ]]; then
     # Make nordvpn.sh executable
-    chmod +x nordvpn.sh
+    chmod +x "$APPS_DIR/nordvpn.sh"
 
     # Execute nordvpn.sh
-    ./scripts/apps/nordvpn.sh
+    "$APPS_DIR/nordvpn.sh"
   else
     echo "nordvpn.sh not found!"
     sleep 1
@@ -58,9 +60,9 @@ run_nordvpn() {
 while true; do
   clear
   echo "==== Package Installer ===="
-  echo "1. Install The Basics"
-  echo "2. Install Paru"
-  echo "3. Install NordVPN"
+  echo "1. Install Packages"
+  echo "2. Run paru.sh"
+  echo "3. Run nordvpn.sh"
   echo "4. Exit"
   echo "==========================="
   read -r choice
