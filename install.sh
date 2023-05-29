@@ -9,7 +9,7 @@ fi
 # Make all the scripts executable
 chmod +x ./*
 chmod +x ./apps/*
-chmod +x ./config/*
+chmod +x ./scripts/*
 
 # Function to partition the disk using cfdisk
 partition_disk() {
@@ -70,8 +70,8 @@ view_disk_structure() {
 # Function to launch the pacstrap.sh script
 launch_pacstrap_script() {
     echo "Launching the pacstrap.sh script..."
-    chmod +x pacstrap.sh
-    ./pacstrap.sh
+    chmod +x ./scripts/pacstrap.sh
+    ./scripts/pacstrap.sh
 }
 
 # Retrieve the list of disks in the system
