@@ -13,6 +13,7 @@ basics_script="$script_dir/basics.sh"
 users_script="$script_dir/users.sh"
 bootloader_script="$script_dir/bootloader.sh"
 services_script="$script_dir/services.sh"
+apps_script="./apps/apps.sh"
 
 # Check if the script directory exists
 if [ ! -d "$script_dir" ]; then
@@ -41,6 +42,11 @@ if [ ! -x "$services_script" ] || [ ! -f "$services_script" ]; then
   exit 1
 fi
 
+if [ ! -x "$apps_script" ] || [ ! -f "$apps_script" ]; then
+  echo "Error: $apps_script is not executable or does not exist."
+  exit 1
+fi
+
 # Function to display menu options
 display_menu() {
   echo "Please select an option:"
@@ -48,6 +54,7 @@ display_menu() {
   echo "2. Launch users.sh"
   echo "3. Launch bootloader.sh"
   echo "4. Launch services.sh"
+  echo "5. Launch apps.sh"
   echo "0. Exit"
 }
 
@@ -58,6 +65,7 @@ execute_script() {
     2) "$users_script";;
     3) "$bootloader_script";;
     4) "$services_script";;
+    5) "$apps_script";;
     0) echo "Exiting..." && exit ;;
     *) echo "Invalid option. Please try again." ;;
   esac
