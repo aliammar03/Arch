@@ -15,14 +15,23 @@ partition_disk() {
 # Function to format a partition as ext4
 format_partition_ext4() {
     echo "Formatting the partition as ext4..."
-    mkfs -t ext4 "${disk}${partition}"
+    if [[ $disk_type == "nvme" ]]; then
+        mkfs -t ext4 "${disk}p${partition}"
+    else
+        mkfs -t ext4 "${disk}${partition}"
+    fi
 }
 
 # Function to format a partition as FAT32 and flag it as ESP using parted
 format_partition_fat32_esp() {
     echo "Formatting the partition as FAT32 and flagging it as ESP..."
-    parted -s $disk set $partition esp on
-    mkfs.fat -F 32 "${disk}${partition}"
+    if [[ $disk_type == "nvme" ]]; then
+        parted -s $disk set ${partition} esp on
+        mkfs.fat -F 32 "${disk}p${partition}"
+    else
+        parted -s $disk set ${partition} esp on
+        mkfs.fat -F 32 "${disk}${partition}"
+    fi
 }
 
 # Function to mount a partition at the specified mount point
@@ -57,7 +66,7 @@ launch_pacstrap_script() {
 }
 
 # Retrieve the list of disks in the system
-disks=($(lsblk -o NAME -n -d | grep -E "^(nvme|sda|sdb|sdc|sdd|sde|sdf)"))
+disks=($(lsblk -o NAME -n -d | grep -E "^(nvme|sda|sdb)"))
 
 # Prompt for the disk to work with
 echo "Please select a disk:"
@@ -75,6 +84,7 @@ if [[ $selected_disk_index -lt 0 || $selected_disk_index -ge ${#disks[@]} ]]; th
 fi
 
 disk="/dev/${disks[selected_disk_index]}"
+disk_type=$(echo "${disks[selected_disk_index]}" | cut -c 1-4)
 
 # Loop until the user chooses to exit
 while true; do
@@ -86,7 +96,7 @@ while true; do
     echo "4. Prepare home"
     echo "5. View current disk structure"
     echo "6. Start Pacstrap"
-    echo "7. ArchChroot"
+    echo "7. ArchChroot"    
     echo "8. Exit"
     read -p "Enter the action number: " action
 
@@ -135,7 +145,7 @@ while true; do
         mount_point="/mnt/home"
         mkdir -p $mount_point
         mount_partition
-
+        
     elif [[ $action -eq 5 ]]; then
         # View current disk structure
         view_disk_structure
@@ -148,7 +158,7 @@ while true; do
         # ArchChroot
         echo "ArchChrooting into new install"
         arch-chroot /mnt
-
+        
     elif [[ $action -eq 8 ]]; then
         # Exit the script
         echo "Exiting the script..."
