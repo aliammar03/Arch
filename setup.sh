@@ -13,7 +13,7 @@ basics_script="$script_dir/basics.sh"
 users_script="$script_dir/users.sh"
 bootloader_script="$script_dir/bootloader.sh"
 services_script="$script_dir/services.sh"
-apps_script="./apps/apps.sh"
+apps_script="$script_dir/apps.sh"
 
 # Check if the script directory exists
 if [ ! -d "$script_dir" ]; then
