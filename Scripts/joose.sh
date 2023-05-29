@@ -37,7 +37,11 @@ format_partition_fat32_esp() {
 # Function to mount a partition at the specified mount point
 mount_partition() {
     echo "Mounting the partition at $mount_point..."
-    mount "${disk}${partition}" $mount_point
+    if [[ $disk_type == "nvme" ]]; then
+        mount "${disk}p${partition}" $mount_point
+    else
+        mount "${disk}${partition}" $mount_point
+    fi
 
     echo "Partition successfully mounted at $mount_point."
 }
